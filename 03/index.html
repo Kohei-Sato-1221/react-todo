@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>React Todo Application</title>
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- 以下はhttps://raw.githubusercontent.com/reactjs/reactjs.org/master/static/html/single-file-example.html　より転記-->
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        (() => {
+            const todos = [
+                {id:0, title: 'task01', isDone: false},
+                {id:1, title: 'task02', isDone: false},
+                {id:2, title: 'task03', isDone: true}
+            ];
+
+            // 1. TodoItemのComponentを作成する
+            function TodoItem(props){
+                return (
+                    <li key={props.key}>
+                        <label>
+                            <input type = "checkbox" checked={props.isDone}/>
+                            {props.title}
+                        </label>
+                    </li>
+                );
+            }
+
+            function TodoList(props){
+                const temptodos = props.todos.map(todo =>{
+                    return (
+                        // 2. 拡張しやすいようにComponentに置き換える
+                        // <li key={todo.id}>{todo.title}</li>
+                        <TodoItem
+                            key={todo.id}
+                            title={todo.title}
+                            isDone={todo.isDone}
+                        />
+                    );
+                });
+                
+                return (
+                    <ul>
+                        {temptodos}
+                    </ul>
+                );
+            }
+
+            class App extends React.Component{
+                constructor(){
+                    super();
+                    this.state = {
+                        todos : todos
+                    };
+                }
+
+                render(){
+                    return(
+                        <React.Fragment>
+                            <h1>hello, world!</h1>
+                            <TodoList todos={this.state.todos}/>
+                        </React.Fragment>
+                    );
+                }
+            }
+
+            ReactDOM.render(
+                <App/>,
+                document.getElementById('root')
+            );
+        })();
+    </script>
+</body>
+</html>
