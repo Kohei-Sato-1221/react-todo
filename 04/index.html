@@ -21,12 +21,15 @@
                 {id:2, title: 'task03', isDone: true}
             ];
 
-            // 1. TodoItemのComponentを作成する
             function TodoItem(props){
                 return (
                     <li key={props.id}>
                         <label>
-                            <input type = "checkbox" checked={props.isDone}/>
+                            <input type = "checkbox" 
+                                checked={props.isDone}
+                                // 1. onChnageを追加
+                                onChange={() => props.checkTodo(props.id)}
+                            />
                             {props.title}
                         </label>
                     </li>
@@ -36,13 +39,13 @@
             function TodoList(props){
                 const temptodos = props.todos.map(todo =>{
                     return (
-                        // 2. 拡張しやすいようにComponentに置き換える
-                        // <li key={todo.id}>{todo.title}</li>
                         <TodoItem
                             key={todo.id}
-                            id={todo.id}
+                            id = {todo.id}
                             title={todo.title}
                             isDone={todo.isDone}
+                            //2. checkTodo属性を追加
+                            checkTodo={props.checkTodo}
                         />
                     );
                 });
@@ -62,11 +65,32 @@
                     };
                 }
 
+                // 4. checkTodo functionを実装
+                checkTodo = (id) => {
+                    const tempTodos = this.state.todos.map(todo =>{
+                        var tempIsDone;
+                        if(id == todo.id){
+                            tempIsDone = !todo.isDone; 
+                        }else{
+                            tempIsDone = todo.isDone;
+                        }
+                        return {id: todo.id, title: todo.title, isDone:tempIsDone}
+                    });
+
+                    this.setState({
+                        todos : tempTodos
+                    });
+                }
+
+                // 3. TodoListにcheckTodoのpropsを追加
                 render(){
                     return(
                         <React.Fragment>
-                            <h1>hello, world!</h1>
-                            <TodoList todos={this.state.todos}/>
+                            <h1>Todo List</h1>
+                            <TodoList 
+                                todos={this.state.todos}
+                                checkTodo={this.checkTodo}
+                            />
                         </React.Fragment>
                     );
                 }

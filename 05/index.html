@@ -21,13 +21,18 @@
                 {id:2, title: 'task03', isDone: true}
             ];
 
-            // 1. TodoItemのComponentを作成する
             function TodoItem(props){
+                // 1. span Classを付与
                 return (
                     <li key={props.id}>
                         <label>
-                            <input type = "checkbox" checked={props.isDone}/>
-                            {props.title}
+                            <input type = "checkbox" 
+                                checked={props.isDone}
+                                onChange={() => props.checkTodo(props.id)}
+                            />
+                            <span className={props.isDone ? 'done' : ''}>
+                                {props.title}
+                            </span>
                         </label>
                     </li>
                 );
@@ -36,13 +41,12 @@
             function TodoList(props){
                 const temptodos = props.todos.map(todo =>{
                     return (
-                        // 2. 拡張しやすいようにComponentに置き換える
-                        // <li key={todo.id}>{todo.title}</li>
                         <TodoItem
                             key={todo.id}
-                            id={todo.id}
+                            id = {todo.id}
                             title={todo.title}
                             isDone={todo.isDone}
+                            checkTodo={props.checkTodo}
                         />
                     );
                 });
@@ -54,6 +58,7 @@
                 );
             }
 
+
             class App extends React.Component{
                 constructor(){
                     super();
@@ -62,11 +67,31 @@
                     };
                 }
 
+                checkTodo = (id) => {
+                    const tempTodos = this.state.todos.map(todo =>{
+                        var tempIsDone;
+                        if(id == todo.id){
+                            tempIsDone = !todo.isDone; 
+                        }else{
+                            tempIsDone = todo.isDone;
+                        }
+                        return {id: todo.id, title: todo.title, isDone:tempIsDone}
+                    });
+
+                    this.setState({
+                        todos : tempTodos
+                    });
+                }
+                
                 render(){
                     return(
                         <React.Fragment>
-                            <h1>hello, world!</h1>
-                            <TodoList todos={this.state.todos}/>
+                            <h1>Todo List</h1>
+                            <TodoList 
+                                todos={this.state.todos}
+                                checkTodo={this.checkTodo}
+                            />
+                            <TodoForm />
                         </React.Fragment>
                     );
                 }

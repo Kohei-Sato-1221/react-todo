@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>React Todo Application</title>
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- 以下はhttps://raw.githubusercontent.com/reactjs/reactjs.org/master/static/html/single-file-example.html　より転記-->
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        (() => {
+            //1. 初期化
+            const todos = [
+                // {id:0, title: 'task01', isDone: false},
+                // {id:1, title: 'task02', isDone: false},
+                // {id:2, title: 'task03', isDone: true}
+            ];
+
+            function TodoItem(props){
+                return (
+                    <li key={props.id}>
+                        <label>
+                            <input type = "checkbox" 
+                                checked={props.isDone}
+                                onChange={() => props.checkTodo(props.id)}
+                            />
+                            <span className={props.isDone ? 'done' : ''}>
+                                {props.title}
+                            </span>
+                        </label>
+                    </li>
+                );
+            }
+
+            function TodoList(props){
+                const temptodos = props.todos.map(todo =>{
+                    return (
+                        <TodoItem
+                            key={todo.id}
+                            id = {todo.id}
+                            title={todo.title}
+                            isDone={todo.isDone}
+                            checkTodo={props.checkTodo}
+                        />
+                    );
+                });
+                
+                return (
+                    <ul>
+                        {temptodos}
+                    </ul>
+                );
+            }
+
+            function TodoForm(props){
+                //2. onSubmitを追加
+                return (
+                    <form onSubmit={props.addTodo}>
+                        <input 
+                            type="text"
+                            value={props.newTodo}
+                            onChange={props.updateForm}
+                        />
+                        <input type="submit" value="add" />
+                    </form>
+                );
+            }
+
+            class App extends React.Component{
+                constructor(){
+                    super();
+                    this.state = {
+                        todos : todos,
+                        newTodo: ''
+                    };
+                }
+
+                checkTodo = (id) => {
+                    const tempTodos = this.state.todos.map(todo =>{
+                        var tempIsDone;
+                        if(id == todo.id){
+                            tempIsDone = !todo.isDone; 
+                        }else{
+                            tempIsDone = todo.isDone;
+                        }
+                        return {id: todo.id, title: todo.title, isDone:tempIsDone}
+                    });
+
+                    this.setState({
+                        todos : tempTodos
+                    });
+                }
+
+                updateForm = (e) => {
+                    this.setState({
+                        newTodo : e.target.value
+                    });
+                }
+
+
+                // 3. addTodoを追加
+                addTodo = (e) => {
+                    e.preventDefault();
+                    var cntTods = (this.state.todos.length + 1);
+
+                    const tempTodo = {
+                        id: cntTods,
+                        title: this.state.newTodo,
+                        isDone:false
+                    };
+
+                    const tempTodos = this.state.todos.slice();
+                    tempTodos.push(tempTodo);
+                    this.setState({
+                        todos : tempTodos
+                    });
+
+
+                }
+
+                //4. addTodoを追加
+                render(){
+                    return(
+                        <React.Fragment>
+                            <h1>Todo List</h1>
+                            <TodoList 
+                                todos={this.state.todos}
+                                checkTodo={this.checkTodo}
+                            />
+                            <TodoForm 
+                                newTodo={this.state.newTodo}
+                                updateForm={this.updateForm}
+                                addTodo={this.addTodo}
+                            />
+                        </React.Fragment>
+                    );
+                }
+            }
+
+            ReactDOM.render(
+                <App/>,
+                document.getElementById('root')
+            );
+        })();
+    </script>
+</body>
+</html>
